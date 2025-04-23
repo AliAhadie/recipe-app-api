@@ -1,0 +1,6 @@
+# dependency modules
+django>4.2,<4.3
+djangorestframework
+
+#linting 
+flake8
