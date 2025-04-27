@@ -4,3 +4,6 @@ djangorestframework
 
 #linting 
 flake8
+
+# postgresDB
+psycopg2-binary
