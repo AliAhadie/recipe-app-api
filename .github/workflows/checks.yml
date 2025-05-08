@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
       - name: 'Test'
         run: |
-          'docker compose backend sh -c "python manage.py test'
+           docker compose run backend sh -c "python manage.py test" 
       - name: 'Lint'
         run: |
-          docker compose  backend sh -c 'python manage.py flake8'
+           docker compose run backend sh -c "flake8" 
