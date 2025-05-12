@@ -5,6 +5,8 @@ class UserManger(BaseUserManager):
     """ user manager class"""
 
     def create_user(self,email,password=None,**kwargs):
+        if not email:
+            raise ValueError('user must have email address !')
         user=self.model(email=email,**kwargs)
         user.set_password(password)
         user.save()
