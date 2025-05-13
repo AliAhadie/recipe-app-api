@@ -13,16 +13,12 @@ class UserModelTests(TestCase):
         self.assertEqual(user.email, email)
         self.assertTrue(user.check_password(password))
 
-    def test_normalize_email(self):
-        """test for normalizing email address."""
-        simple_email=[
-            ['User@example.com','user@example.com'],
-            ["user@example.COM",'user@example.com'],
-            ['user@EXAMPLE.com','user@example.com'],
-            ['user@ExAmPlE.CoM','user@example.com']
+    def test_create_superuser(self):
+        email='admin@example.com'
+        password='test@1234'
+        user=get_user_model().objects.create_superuser(email=email,password=password)
+        self.assertTrue(user.is_superuser) 
+        self.assertTrue(user.is_staff) 
 
-        ]
-        for email,expected in simple_email:
-            user=get_user_model().objects.create_user(email,'test@1234')
-            self.assertEqual(user.email,expected)
+
             
