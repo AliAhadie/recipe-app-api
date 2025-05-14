@@ -7,3 +7,6 @@ flake8
 
 # postgresDB
 psycopg2-binary
+
+#api doc
+drf-spectacular
