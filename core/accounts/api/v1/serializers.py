@@ -8,15 +8,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
     Serializer for creating a new user.
     """
 
-    confirm_password = serializers.CharField(
-        write_only=True,
-        required=True,
-        style={"input_type": "password"},
-    )
-
     class Meta:
         model = get_user_model()
-        fields = ("email", "password", "confirm_password")
+        fields = ("email", "password")
         extra_kwargs = {
             "password": {
                 "write_only": True,
@@ -24,29 +18,28 @@ class CreateUserSerializer(serializers.ModelSerializer):
             }
         }
 
-    def validate(self, attrs):
-
-        if attrs["password"] != attrs["confirm_password"]:
-            raise ValueError("password dont match!")
-        errors = {}
-        try:
-            validators.validate_password(
-                password=attrs["password"], user=attrs["email"]
-            )
-
-        except serializers.ValidationError as e:
-            errors["password"] = list(e.messages)
-        if errors:
-            raise serializers.ValidationError(errors)
-        return attrs
 
     def create(self, validated_data):
         """
         Create and return a new user.
         """
-        validated_data.pop("confirm_password")
+        
         user = get_user_model().objects.create_user(**validated_data)
         return user
+    
+    
+    def update(self, instance, validated_data):
+        """Update and return user."""
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+
+        if password:
+            user.set_password(password)
+            user.save()
+
+        return user
+    
+
 
 
 class AuthTokenSerializer(serializers.Serializer):
@@ -73,3 +66,6 @@ class AuthTokenSerializer(serializers.Serializer):
             raise serializers.ValidationError("user dosent exist!")
         attrs["user"] = user
         return attrs
+
+
+

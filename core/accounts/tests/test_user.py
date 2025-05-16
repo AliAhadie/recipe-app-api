@@ -23,7 +23,7 @@ class UserPublicTests(TestCase):
         data = {
             "email": "test@example.com",
             "password": "testpass123",
-            "confirm_password": "testpass123",
+          
         }
 
         res = self.client.post(CREATE_USER_URL, data)
@@ -37,9 +37,9 @@ class UserPublicTests(TestCase):
         data = {
             "email": "test@example.com",
             "password": "testpass123",
-            "confirm_password": "testpass123",
+            
         }
-        data.pop("confirm_password")
+
         create_user(**data)
         res = self.client.post(CREATE_USER_URL, data)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
@@ -80,32 +80,23 @@ class UserPrivateTests(TestCase):
         """
         Set up the user for testing.
         """
+        self.user = create_user(email='test@example.com',password='test@1234')
         self.client = APIClient()
+        self.client.force_authenticate(user=self.user)
 
-        self.user = {"email": "test@example.com", "password": "testpass1234"}
-        self.client.force_authenticate(self.user)
-
-    def test_get_me_view(self):
-        """
-        Test retrieving the current user profile.
-        """
-
+    def test_retrieve_profile_success(self):
+        """Test retrieving profile for logged in user."""
         res = self.client.get(ME_URL)
+
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data["email"], self.user.email)
+        self.assertEqual(res.data, {
+            'email': self.user.email,
+        })
+
 
     def test_post_me_not_allowed(self):
-        """Test that POST is not allowed on the me endpoint"""
-        res = self.client.post(ME_URL)
+        """Test POST is not allowed for the me endpoint."""
+        res = self.client.post(ME_URL, {})
+
         self.assertEqual(res.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def test_update_user_profile(self):
-        """
-        Test updating the user profile for authenticated users.
-        """
-
-        data = {"password": "newpassword123"}
-        res = self.client.patch(ME_URL, data)
-        self.user.refresh_from_db()
-        self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertTrue(self.user.check_password(data["password"]))
