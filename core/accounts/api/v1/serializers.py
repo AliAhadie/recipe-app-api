@@ -4,9 +4,32 @@ import django.contrib.auth.password_validation as validators
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(read_only=True)  # 👈 فقط قابل مشاهده
+
+    class Meta:
+        model = get_user_model()
+        fields = ("email", "password")
+        extra_kwargs = {
+            "password": {"write_only": True, "min_length": 8},
+            'email':{'read_only':True}
+        }
+
+    def create(self, validated_data):
+        user = get_user_model().objects.create_user(**validated_data)
+        return user
+
+    def update(self, instance, validated_data):
+        password = validated_data.pop('password', None)
+        user = super().update(instance, validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+        return user
+
     """
     Serializer for creating a new user.
     """
+
 
     class Meta:
         model = get_user_model()

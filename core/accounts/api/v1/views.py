@@ -1,4 +1,4 @@
-from rest_framework.generics import CreateAPIView,UpdateAPIView,GenericAPIView
+from rest_framework.generics import CreateAPIView,UpdateAPIView,GenericAPIView,RetrieveUpdateAPIView
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
@@ -23,9 +23,13 @@ class AuthTokenApiView(ObtainAuthToken):
     serializer_class = AuthTokenSerializer
     renderer_classes=api_settings.DEFAULT_RENDERER_CLASSES
 
-class UpdateUserApiView(UpdateAPIView):
+class UpdateUserApiView(RetrieveUpdateAPIView):
     authentication_classes = [TokenAuthentication]
     serializer_class = CreateUserSerializer
     permission_classes = [IsAuthenticated]
+    
     def get_object(self):
         return self.request.user
+    
+
+
