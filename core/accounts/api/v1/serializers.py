@@ -4,7 +4,7 @@ import django.contrib.auth.password_validation as validators
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(read_only=True)  # 👈 فقط قابل مشاهده
+     # 👈 فقط قابل مشاهده
 
     class Meta:
         model = get_user_model()
