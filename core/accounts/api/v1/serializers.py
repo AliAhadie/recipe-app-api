@@ -4,14 +4,14 @@ import django.contrib.auth.password_validation as validators
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-     # 👈 فقط قابل مشاهده
+    # 👈 فقط قابل مشاهده
 
     class Meta:
         model = get_user_model()
         fields = ("email", "password")
         extra_kwargs = {
             "password": {"write_only": True, "min_length": 8},
-            'email':{'read_only':True}
+            "email": {"read_only": True},
         }
 
     def create(self, validated_data):
@@ -19,7 +19,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
+        password = validated_data.pop("password", None)
         user = super().update(instance, validated_data)
         if password:
             user.set_password(password)
@@ -29,7 +29,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
     """
     Serializer for creating a new user.
     """
-
 
     class Meta:
         model = get_user_model()
@@ -41,19 +40,17 @@ class CreateUserSerializer(serializers.ModelSerializer):
             }
         }
 
-
     def create(self, validated_data):
         """
         Create and return a new user.
         """
-        
+
         user = get_user_model().objects.create_user(**validated_data)
         return user
-    
-    
+
     def update(self, instance, validated_data):
         """Update and return user."""
-        password = validated_data.pop('password', None)
+        password = validated_data.pop("password", None)
         user = super().update(instance, validated_data)
 
         if password:
@@ -61,8 +58,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
-    
-
 
 
 class AuthTokenSerializer(serializers.Serializer):
@@ -83,12 +78,9 @@ class AuthTokenSerializer(serializers.Serializer):
 
         email = attrs["email"]
         password = attrs["password"]
-        request=self.context.get("request")
+        request = self.context.get("request")
         user = authenticate(request=request, email=email, password=password)
         if not user:
             raise serializers.ValidationError("user dosent exist!")
         attrs["user"] = user
         return attrs
-
-
-
