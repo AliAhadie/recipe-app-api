@@ -30,6 +30,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         tags_data = validated_data.pop('tags', None)
+
         if tags_data is not None:  # Allow clearing tags if an empty list is provided
             instance.tags.clear()
             for tag_data in tags_data:
